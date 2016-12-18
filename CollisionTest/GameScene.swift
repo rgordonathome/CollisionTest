@@ -14,7 +14,8 @@ class GameScene: SKScene {
     // MARK: Properties
     let tileCount : CGFloat = 8.0
     var tileSize : Int = 0
-    
+    var player = SKSpriteNode()
+
     override func didMove(to view: SKView) {
         
         // Set background
@@ -32,7 +33,15 @@ class GameScene: SKScene {
             addChild(wall)
         }
         
+        // Draw the player node
+        player = SKSpriteNode(imageNamed: "player")
+        player.position = CGPoint(x: 100, y: self.size.height / 2)
+        player.zPosition = 1
+        player.setScale(1.0)
+        addChild(player)
 
     }
+    
+    
     
 }
