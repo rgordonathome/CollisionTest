@@ -9,6 +9,11 @@
 import SpriteKit
 import GameplayKit
 
+extension FloatingPoint {
+    var degreesToRadians: Self { return self * .pi / 180 }
+    var radiansToDegrees: Self { return self * 180 / .pi }
+}
+
 class GameScene: SKScene {
     
     // MARK: Properties
@@ -17,6 +22,7 @@ class GameScene: SKScene {
     var player = SKSpriteNode()
     var playerSpeed : CGFloat = 1000
     var playerHitWall : Bool = false
+    var newHeading : CGFloat = 0
     
     override func didMove(to view: SKView) {
         
@@ -70,6 +76,10 @@ class GameScene: SKScene {
         // Get the time player should take to arrive at this destination
         let time = TimeInterval(distanceToTouch / playerSpeed)
         
+        // Determine the current heading for the player (relative to current position)
+        let newHeading = heading(from: player.position, to: touchLocation)
+        print("heading \(newHeading)")
+        
         // Create the move action
         let actionMove = SKAction.move(to: touchLocation, duration: time)
         
@@ -86,6 +96,19 @@ class GameScene: SKScene {
     func distance(from : CGPoint, to: CGPoint) -> CGFloat {
         
         return sqrt(pow(from.x - to.x, 2) + pow(from.y - to.y, 2))
+    }
+    
+    // This determines the heading of the player relative to their prior position
+    func heading(from currentPosition : CGPoint, to newPosition: CGPoint) -> CGFloat {
+        let oppositeLength = newPosition.y - currentPosition.y
+        let adjacentLength = newPosition.x - currentPosition.x
+        let distanceToTouch = distance(from: currentPosition, to: newPosition)
+        let angle = CGFloat(acos(Double(adjacentLength / distanceToTouch)).radiansToDegrees)
+        if oppositeLength < 0 {
+            return 180 + (180 - angle)
+        } else {
+            return angle
+        }
     }
     
     // This function checks for collisions between the wall and the player
