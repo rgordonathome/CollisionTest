@@ -16,6 +16,7 @@ class GameScene: SKScene {
     var tileSize : Int = 0
     var player = SKSpriteNode()
     var playerSpeed : CGFloat = 1000
+    var playerHitWall : Bool = false
     
     override func didMove(to view: SKView) {
         
@@ -73,7 +74,12 @@ class GameScene: SKScene {
         let actionMove = SKAction.move(to: touchLocation, duration: time)
         
         // Run the move action
-        player.run(actionMove, withKey: "playerMoving")
+        if playerHitWall == true {
+            playerHitWall = false // Reset the boolean
+            player.run(actionMove, withKey: "playerMovingWithGodModeNothingWillStopItMuahaha")
+        } else {
+            player.run(actionMove, withKey: "playerMoving")
+        }
     }
     
     // This determines the distance between two points using the Pythagorean Theorem
@@ -97,6 +103,14 @@ class GameScene: SKScene {
                 
                 // A brick is touching the player, so make the player stop
                 self.player.removeAction(forKey: "playerMoving")
+                
+                // Set a boolean to say that the player stopped because of a wall being hit
+                // However, don't do this if the player is moving in "god mode"
+                if (self.player.action(forKey: "playerMovingWithGodModeNothingWillStopItMuahaha") == nil) {
+                    self.playerHitWall = true
+                }
+                
+                
                 
             }
             
