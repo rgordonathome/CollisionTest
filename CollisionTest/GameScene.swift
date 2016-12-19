@@ -28,6 +28,7 @@ class GameScene: SKScene {
         // Draw a brick wall in the middle of the screen
         for i in 1...Int(tileCount) {
             let wall = SKSpriteNode(imageNamed: "brick")
+            wall.name = "brick"
             wall.position = CGPoint(x: self.size.width / 2, y: CGFloat(tileSize / 2 + tileSize * i) )
             wall.zPosition = 1
             wall.setScale(6.0)
@@ -41,6 +42,13 @@ class GameScene: SKScene {
         player.setScale(1.0)
         addChild(player)
 
+    }
+    
+    // This function runs approximately 60 times per second
+    override func update(_ currentTime: TimeInterval) {
+        
+        // See if the player is colliding with the wall
+        checkCollisions()
     }
     
     // This responds to a single touch
@@ -72,6 +80,29 @@ class GameScene: SKScene {
     func distance(from : CGPoint, to: CGPoint) -> CGFloat {
         
         return sqrt(pow(from.x - to.x, 2) + pow(from.y - to.y, 2))
+    }
+    
+    // This function checks for collisions between the wall and the player
+    func checkCollisions() {
+        
+        // Find all the bricks in the scene that form a wall
+        enumerateChildNodes(withName: "brick", using: {
+            node, _ in
+            
+            // Get a reference to the brick
+            let brick = node as! SKSpriteNode
+            
+            // Check to see if this wall segment is touching the player
+            if brick.frame.intersects(self.player.frame) {
+                
+                // A brick is touching the player, so make the player stop
+                self.player.removeAction(forKey: "playerMoving")
+                
+            }
+            
+        })
+
+        
     }
     
     
