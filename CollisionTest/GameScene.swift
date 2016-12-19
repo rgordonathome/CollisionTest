@@ -23,6 +23,7 @@ class GameScene: SKScene {
     var playerSpeed : CGFloat = 1000
     var playerHitWall : Bool = false
     var newHeading : CGFloat = 0
+    var priorHeading : CGFloat = 0
     
     override func didMove(to view: SKView) {
         
@@ -77,14 +78,18 @@ class GameScene: SKScene {
         let time = TimeInterval(distanceToTouch / playerSpeed)
         
         // Determine the current heading for the player (relative to current position)
-        let newHeading = heading(from: player.position, to: touchLocation)
-        print("heading \(newHeading)")
+        priorHeading = newHeading // Save the prior heading before heading off on new one
+        newHeading = heading(from: player.position, to: touchLocation)
+        let absoluteHeadingDifference = abs(newHeading - priorHeading)
+        print("priorHeading is: \(priorHeading)")
+        print("newHeading is: \(newHeading)")
+        print("absolute difference between old and new headings \(abs(newHeading - priorHeading))")
         
         // Create the move action
         let actionMove = SKAction.move(to: touchLocation, duration: time)
         
         // Run the move action
-        if playerHitWall == true {
+        if playerHitWall == true && absoluteHeadingDifference > 90 && absoluteHeadingDifference < 270 {
             playerHitWall = false // Reset the boolean
             player.run(actionMove, withKey: "playerMovingWithGodModeNothingWillStopItMuahaha")
         } else {
